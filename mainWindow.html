@@ -3,51 +3,107 @@
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
-    <title>ShoppingList</title>
+    <title>Todo List</title>
 </head>
 <body>
     <nav>
         <div class="nav-wrapper">
-            <a class="brand-logo center">Shopping List</a>    
+            <a class="brand-logo center">Todo List</a>    
         </div>
     </nav>
-    
-    <ul>
+    <div class="container">
+        <ul id="list">
 
-    </ul>
+        </ul>
+    </div>
+    
+    
 
 <script>
     const electron = require('electron');
+    const db = require('./database');
+
     const {ipcRenderer} = electron;
 
-    const ul = document.querySelector('ul');
-    // catch item
-    ipcRenderer.on('item:add',function(e,item){
-        ul.className = 'collection';
-        const li = document.createElement('li');
-        li.className = 'collection-item';
-        const itemText = document.createTextNode(item);
-        li.appendChild(itemText);
-        ul.appendChild(li);
-    });
-    // clear item;
-    ipcRenderer.on('item:clear',function(e,item){
-       ul.innerHTML ="";
-       ul.className = "";
+    let ul = document.querySelector('#list');
+
+    let data = [];
+    ipcRenderer.send('item-get');
+
+    // get all items from main.js and update html
+    ipcRenderer.on("item-get", (e, items) => {
+        data = items;
+        renderHtml(data);
     });
 
-    // remove item
-
-    ul.addEventListener('dblclick',removeItem);
-
-    function removeItem(e){
-        e.target.remove();
-        if(ul.children.length==0){
-            ul.className = "";
+    // render html
+    function renderHtml(data){
+      ul.innerHTML="";
+      for(let i=0;i<data.length;i++){
+            ul.innerHTML += `
+          <li>
+            <p>
+               Name: ${data[i].name}
+            </p>
+            <button class="btn btn-danger"  onclick="deleteItem('${data[i]._id}')">
+              🗑 Delete
+            </button>
+            <button class="btn btn-secondary" onclick="editItem('${data[i]._id}')">
+              ✎ Edit
+            </button>
+          </li>
+        `;
         }
-        
-        
+    };
+    
+    
+   
+   
+
+    // catch new item from main.js and update html
+    ipcRenderer.on('item-add-success',function(e,item){
+
+      data.push(item);
+      renderHtml(data);
+      // console.log(item);
+    });
+
+    // send edit item to main.js
+    function editItem(id){
+      const item = data.find(item => item._id === id);
+      ipcRenderer.send('item-update',item);
     }
+
+   
+    // send delete item'sid to main.js
+    function deleteItem(id){
+      ipcRenderer.send('item-delete',id);
+    }
+
+    // get delete item from main.js and update html
+    ipcRenderer.on('item-delete-success',function(e,id){
+
+      newData = data.filter(function(item){
+               return item._id !== id;
+      });
+      data = newData;
+      renderHtml(data);
+    });
+
+    // get new update item value from main.js and update html
+    ipcRenderer.on('item-update-success',function(e,item){
+      data = data.map((v, i) => {
+        if (v._id === item._id) {
+          v.name = item.name;
+        }
+        return v;
+      });
+      renderHtml(data);
+      
+    });
+
+    
+
 </script>
 </body>
 </html>

@@ -3,17 +3,17 @@
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
-    <title>Add Shopping List Item</title>
+    <title>Add Todo List Item</title>
 </head>
 <body>
 <div class="container">
     <form>
         <div>
-            <label>Enter Item</label>
+            <label>Item Name</label>
             <input type="text" id="item" autofocus>
 
         </div>
-        <button class="btn waves-effect waves-light" type="submit">add Item</button>
+        <button class="btn waves-effect waves-light" id="button" type="submit">add Item</button>
     </form>
 </div>
     
@@ -23,14 +23,32 @@
 
     const {ipcRenderer} = electron;
 
+    var currentWindow = electron.remote.getCurrentWindow();
+ 
+    if(currentWindow.edit){
+        document.querySelector("#item").value= currentWindow.edit.data.name;
+        document.querySelector('#button').innerHTML="Update Item";
+    }
+
     const form =document.querySelector('form');
     form.addEventListener('submit',submitForm);
 
     function submitForm(e){
         e.preventDefault();
         const item = document.querySelector("#item").value;
-        ipcRenderer.send('item:add',item);
+        if(currentWindow.edit){
+            let updateItem = currentWindow.edit.data;
+            updateItem.name=item;
+            ipcRenderer.send('item-updated',updateItem);
+        }
+        else{
+
+            ipcRenderer.send('item-add',item);
+        }
+        
     }
+
+    
 </script>
 </body>
 </html>
