@@ -1,7 +1,8 @@
-const Datastore = require('nedb');
-let db={};
-db.categories = new Datastore({ filename: './category.db', autoload: true });
-// db.subcategories = new Datastore({ filename: './sub-category.db', autoload: true });
-db.categories.loadDatabase();
-// db.subcategories.loadDatabase();
-module.exports = db;
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/app', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+  .then(db => console.log('DB is connected'))
+  .catch(err => console.log(err));

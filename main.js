@@ -2,12 +2,14 @@ const electron = require('electron');
 const url = require('url');
 const path = require('path');
 
-const db = require('./database');
+require('./database');
+const Category = require("./models/category");
+
 
 const {app,BrowserWindow,Menu,ipcMain,ipcRenderer} = electron;
 
 // set env
-process.env.NODE_ENV = 'production';
+process.env.NODE_ENV = '';
 let mainWindow;
 let addWindow;
 
@@ -74,31 +76,37 @@ function createAddWindow(){
 
 // send all items to main.html
 ipcMain.on('item-get',function(e,arg){
-    db['categories'].find({},function(err,data){
-       mainWindow.webContents.send('item-get',data);
+    Category.find({},function(err,data){
+       if(!err){
+            mainWindow.webContents.send('item-get',JSON.stringify(data));
+       }
        
    });
 });
 
 // get new item from addWindow.html
 ipcMain.on('item-add',function(e,item){
-    db['categories'].insert({'name':item}, function (err, item) {
-        mainWindow.webContents.send('item-add-success',item);
+    const newCategory = new Category({'name':item});
+    const saveCategory = newCategory.save();
+    console.log(newCategory);
+    if(saveCategory){
+        mainWindow.webContents.send('item-add-success',JSON.stringify(newCategory));
         addWindow.close();
-    });
+    }
+    
     
 });
 
 
 // get item's id from main.html and delete item
 ipcMain.on('item-delete',function(e,id){
-  
-    db['categories'].remove({ _id: id }, {}, function (err, numRemoved) {
-        mainWindow.webContents.send('item-delete-success',id);
 
-      });
-    
-    
+    Category.findByIdAndDelete(id,function(err,data){
+        if(!err){
+            mainWindow.webContents.send('item-delete-success',id);
+        }
+    });
+      
 });
 
 // get update item to pass add.html
@@ -112,8 +120,8 @@ ipcMain.on('item-update',function(e,item){
 // get updated item from add.html
 ipcMain.on('item-updated',function(e,item){
   
-   db['categories'].update({_id:item._id}, { $set: { name:item.name} },function(err,numUpdated){
-      if(numUpdated){
+   Category.findByIdAndUpdate({_id:item._id}, { name:item.name },function(err,data){
+      if(!err){
          mainWindow.webContents.send('item-update-success',item);
           addWindow.close();
       }

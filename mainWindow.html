@@ -21,7 +21,7 @@
 
 <script>
     const electron = require('electron');
-    const db = require('./database');
+    // const db = require('./database');
 
     const {ipcRenderer} = electron;
 
@@ -32,7 +32,7 @@
 
     // get all items from main.js and update html
     ipcRenderer.on("item-get", (e, items) => {
-        data = items;
+        data = JSON.parse(items);
         renderHtml(data);
     });
 
@@ -62,8 +62,8 @@
 
     // catch new item from main.js and update html
     ipcRenderer.on('item-add-success',function(e,item){
-
-      data.push(item);
+      
+      data.push(JSON.parse(item));
       renderHtml(data);
       // console.log(item);
     });
