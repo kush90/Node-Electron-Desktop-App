@@ -35,6 +35,7 @@ app.on('ready',function(){
     // build menu from template
     const mainWMenu = Menu.buildFromTemplate(mainMenuTemplate);
     mainWindow.setMenu(mainWMenu);
+    mainWindow.maximize();
     
 
    

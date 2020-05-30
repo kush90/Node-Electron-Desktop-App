@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
     <title>Todo List</title>
 </head>
 <body>
-    <nav>
-        <div class="nav-wrapper">
-            <a class="brand-logo center">Todo List</a>    
-        </div>
-    </nav>
-    <div class="container">
-        <ul id="list">
-
-        </ul>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Desktop App</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link active" href="#" >Category</a>
+        <a class="nav-item nav-link" href="#">Sub Category</a>
+        <a class="nav-item nav-link " href="#" onclick="about()" >About <span class="sr-only">(current)</span></a>
+      </div>
     </div>
-    
+  </nav>
+  <div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table">
+                <thead>
+                    <th>Name</th>
+                    <th>Action</th>
+                </thead>
+                <tbody id="list">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+  
     
 
 <script>
     const electron = require('electron');
-    // const db = require('./database');
+    const path = require('path');
+
 
     const {ipcRenderer} = electron;
 
-    let ul = document.querySelector('#list');
+    let tbody = document.querySelector('#list');
 
     let data = [];
     ipcRenderer.send('item-get');
@@ -38,27 +58,27 @@
 
     // render html
     function renderHtml(data){
-      ul.innerHTML="";
+      tbody.innerHTML="";
       for(let i=0;i<data.length;i++){
-            ul.innerHTML += `
-          <li>
-            <p>
-               Name: ${data[i].name}
-            </p>
-            <button class="btn btn-danger"  onclick="deleteItem('${data[i]._id}')">
-              🗑 Delete
-            </button>
-            <button class="btn btn-secondary" onclick="editItem('${data[i]._id}')">
-              ✎ Edit
-            </button>
-          </li>
+        tbody.innerHTML += `
+            <tr>
+                        <td>${data[i].name}</td>
+                        <td>
+                            
+                            <button class="btn btn-success" onclick="editItem('${data[i]._id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger" onclick="deleteItem('${data[i]._id}')"><i class="fas fa-trash-alt"></i></button>
+                            </td>
+                    </tr>
         `;
         }
     };
+
+    // redirect to about page
+    function about(){
+      window.location=path.join(__dirname,'about.html');
+    }
     
     
-   
-   
 
     // catch new item from main.js and update html
     ipcRenderer.on('item-add-success',function(e,item){
@@ -105,5 +125,9 @@
     
 
 </script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
