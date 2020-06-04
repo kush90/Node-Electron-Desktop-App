@@ -57,7 +57,7 @@ function createAddWindow(){
      });
      // load html into window
      addWindow.loadURL(url.format({
-         pathname:path.join(__dirname,'addWindow.html'),
+         pathname:path.join(__dirname,'category/addWindow.html'),
          protocol:'file:',
          slashes:true
      }));
@@ -86,7 +86,7 @@ ipcMain.on('item-get',function(e,arg){
 });
 
 // get new item from addWindow.html
-ipcMain.on('item-add',function(e,item){
+ipcMain.on('item-added',function(e,item){
     const newCategory = new Category({'name':item});
     const saveCategory = newCategory.save();
     console.log(newCategory);
@@ -94,6 +94,13 @@ ipcMain.on('item-add',function(e,item){
         mainWindow.webContents.send('item-add-success',JSON.stringify(newCategory));
         addWindow.close();
     }
+    
+    
+});
+
+// get new item from main.html
+ipcMain.on('item-add',function(e,item){
+    createAddWindow();
     
     
 });
@@ -137,12 +144,6 @@ const mainMenuTemplate = [
         label:'File',
         submenu:[
             {
-                label:'Add Item',
-                click(){
-                    createAddWindow()
-                }
-            },
-            {
                 label:'Quit',
                 accelerator:process.platform == 'darwin' ? 'Command+Q':'Ctrl+Q',
                 click(){
@@ -162,7 +163,7 @@ const addMenuTemplate = [
                 label:'Quit',
                 accelerator:process.platform == 'darwin' ? 'Command+Q':'Ctrl+Q',
                 click(){
-                    app.quit();
+                    addWindow.close();
                 }
             }
         ],

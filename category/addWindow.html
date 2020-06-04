@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel='stylesheet' href='../node_modules/bootstrap/dist/css/bootstrap.css' />
 
     <title>Add Todo List Item</title>
 </head>
 <body>
+<br>
 <div class="container">
-    <form>
-        <div>
-            <label>Item Name</label>
-            <input type="text" id="item" autofocus>
-
+    
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="item">Name:</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="item" placeholder="Enter item">
         </div>
-        <button class="btn waves-effect waves-light" id="button" type="submit">add Item</button>
+      </div>
+
+      <div class="form-group">        
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-primary" id="button">add Item</button>
+        </div>
+      </div>
     </form>
+   
 </div>
     
 
@@ -43,12 +52,15 @@
         }
         else{
 
-            ipcRenderer.send('item-add',item);
+            ipcRenderer.send('item-added',item);
         }
         
     }
 
     
 </script>
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+<script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
