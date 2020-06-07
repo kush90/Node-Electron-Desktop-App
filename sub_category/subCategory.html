@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel='stylesheet' href='../node_modules/bootstrap/dist/css/bootstrap.css' />
+    <title>About</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <a class="navbar-brand" href="#">Desktop App</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="#" onclick="category()">Category</a>
+            <a class="nav-item nav-link active" href="#">Sub Category</a>
+            <a class="nav-item nav-link " onclick="about()" >About <span class="sr-only">(current)</span></a>
+          </div>
+        </div>
+      </nav>
+      <br>
+      <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+              <div class="card ">
+                <div class="card-header bg-primary text-white">
+                  <span>Sub Category List</span>&nbsp;&nbsp;
+                  <button class="btn btn-sm btn-warning" onclick="addSubCategory()">ADD +</button>
+                </div>
+                <div class="card-body">
+                  <table class="table">
+                    <thead>
+                        <th>Category</th>
+                        <th>Name</th>
+                        <th>Info</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody id="list">
+
+                    </tbody>
+                  </table>
+                </div> 
+                
+              </div>
+                
+            </div>
+        </div>
+      </div>
+    <script>
+           
+        const electron = require('electron');     
+        const {ipcRenderer} = electron;
+        const path = require('path');
+
+        let tbody = document.querySelector('#list');
+
+        let data = [];
+
+        ipcRenderer.send('get-sub-categories');
+
+        // get all items from main.js and update html
+        ipcRenderer.on("get-sub-categories", (e, items) => {
+            data = JSON.parse(items);
+            // console.log(data);
+            renderHtml(data);
+        });
+
+         // get added sub category from addWindow.js to render in html
+         ipcRenderer.on("sub-category-added", (e, item) => {
+            data.push(JSON.parse(item));
+            renderHtml(data);
+        });
+
+        // render html
+        function renderHtml(data){
+              tbody.innerHTML="";
+            for(let i=0;i<data.length;i++){
+                  tbody.innerHTML += `
+                  <tr>
+                      <td>${data[i].category}</td>
+                      <td>${data[i].name}</td>
+                      <td>${ReadJson(data[i].info)}
+                      </td>
+                      <td>${data[i].price}
+                      <td>
+                          <button class="btn btn-sm btn-danger"><small>Delete</small></button>
+                      </td>
+                  </tr>
+                
+              `;
+              }            
+        };
+
+        // read object json
+        function ReadJson(obj){
+          let value = "";
+          for (var key in Object.keys(obj)) {
+              var t = Object.keys(obj)[key];
+              value += t + " : " + obj[t]+"<br>";
+          }
+          return value;
+        }
+
+        // redirect to category page
+        function category(){
+            window.location = path.join(__dirname,'../mainWindow.html');
+        }
+        // redirect to about page
+        function about(){
+           window.location =  path.join(__dirname,'../about.html'); 
+        }
+
+         // send signal to addWindow.js to call window pop up
+        function addSubCategory(){
+            ipcRenderer.send('add-sub-category');
+        }
+
+         
+       
+
+
+
+
+    </script>
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>

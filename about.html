@@ -3,11 +3,10 @@
 <html lang="en">
 <head>
     <link rel='stylesheet' href='./node_modules/bootstrap/dist/css/bootstrap.css' />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <title>About</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
         <a class="navbar-brand" href="#">Desktop App</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -15,11 +14,12 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
             <a class="nav-item nav-link" href="#" onclick="category()">Category</a>
-            <a class="nav-item nav-link" href="#">Sub Category</a>
+            <a class="nav-item nav-link" onclick="subCategory()" href="#">Sub Category</a>
             <a class="nav-item nav-link active" >About <span class="sr-only">(current)</span></a>
           </div>
         </div>
-      </nav>
+    </nav>
+    <br>
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -57,8 +57,8 @@
                         <td>${data[i].name}</td>
                         <td>
                             
-                            <button class="btn btn-success"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                            <button class="btn btn-success"><small>Edit</small></button>
+                            <button class="btn btn-danger"><small>Delete</small></button>
                             </td>
                     </tr>
                   
@@ -68,14 +68,16 @@
 
             // redirect to category page
             function category(){
-                window.location=path.join(__dirname,'mainWindow.html');
+                window.location = path.join(__dirname,'mainWindow.html');
             }
-
+            function subCategory(){
+                window.location=path.join(__dirname,'./sub_category/subCategory.html');
+            }
 
     </script>
     <script src="./node_modules/jquery/dist/jquery.js"></script>
     <script src="./node_modules/jquery/dist/jquery.slim.min.js"></script>
-    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="./node_modules/popper.js/dist/popper.min.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
 </body>
 </html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel='stylesheet' href='../node_modules/bootstrap/dist/css/bootstrap.css' />
+    <link rel='stylesheet' href="../assets/css/style.css">
+    <title>Add Sub Category</title>
+</head>
+<body>
+<br>
+<div class="container margin-bottom">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <span>Sub Category</span>
+           
+        </div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label>Category:</label>
+                    <select class="form-control" id="mySelect">
+                        <option>Please select one..</option>
+                        
+                      </select>
+                </div>
+                <div class="form-group">
+                    <label>Sub Category</label>
+                    <input type="text" class="form-control" id="cname" placeholder="Enter sub category name">
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="text" class="form-control" id="price" placeholder="Enter price">
+                </div>
+                <hr>
+                <fieldset>
+                    <legend>Info: &nbsp;&nbsp;<input type="button" class="btn btn-sm btn-warning" value="ADD +" onclick="addInput('dynamicInput');"></legend>
+                    <div class="form-group" id="dynamicInput">
+                        <label>Field Name:</label>
+                        <input type="text" class="form-control" name="Name[]" placeholder="Enter field name"><br>
+                        <label>Field Value:</label>
+                        <input type="text" class="form-control" name="Value[]" placeholder="Enter field value">
+                        <hr>
+                    </div>
+                </fieldset>
+                <button type="button" class="btn btn-primary" id="create">Submit</button>
+                
+           </form>
+        </div>
+      </div>
+</div>
+    
+
+<script>
+    const electron = require('electron');
+
+    const {ipcRenderer} = electron;
+
+    ipcRenderer.send('get-categories');
+
+    ipcRenderer.on("get-categories", (e, items) => {
+           data = JSON.parse(items);
+           generateSelectOption(data);
+           console.log(data);
+    });
+
+   
+    // dynamic form action
+    let create = document.getElementById('create');
+    create.addEventListener('click',submitForm);
+
+    // generate select option value
+    function generateSelectOption(options){
+        select = document.getElementById('mySelect');
+        for (var i = 0; i<=options.length; i++){
+            var opt = document.createElement('option');
+            opt.value = options[i].name;
+            opt.innerHTML = options[i].name;
+            select.appendChild(opt);
+         }
+    }
+   
+
+    // submit form
+    function submitForm(e){
+        e.preventDefault();
+        let names = document.getElementsByName('Name[]');
+        let values = document.getElementsByName('Value[]');
+
+        let info = {};
+        let final = {};
+       
+        for(let i=0;i<names.length;i++){
+            let obj = {};
+            obj[names[i].value] = values[i].value;
+            
+            Object.assign(info,obj);
+        }
+
+        var select = document.getElementById("mySelect");
+        var value = select.options[select.selectedIndex].value; 
+        if(value != "Please select one.."){
+           final['category']=value;
+        }
+
+        var v = document.getElementById("cname").value;
+        final['price'] = document.getElementById("price").value;
+        
+
+        final['name'] = v;
+        final['info'] = info;
+        console.log(final);
+        ipcRenderer.send('new-sub-category-data',final);
+        
+        
+    }
+
+    // generate dynamic form div
+    var counter = 1;
+    function addInput(divName){
+        counter++;
+        var newdiv = document.createElement('div');
+        newdiv.setAttribute('id','current' + counter);
+        newdiv.innerHTML ="<label>Field Name:</label><input type='text' class='form-control' name='Name[]' placeholder='Enter name'><br>";
+        newdiv.innerHTML+="<label>Field Value:</label><input type='text' class='form-control' name='Value[]' placeholder='Enter value'><br>";
+        newdiv.innerHTML+="<button class='btn btn-danger' type='button'onclick='remove(this)'>Remove</button><hr>"
+       
+        document.getElementById(divName).appendChild(newdiv);
+            
+    }
+
+    // remove dynamic input form div
+    function remove(element){
+        element.parentElement.remove();
+    }
+   
+    
+    
+
+    
+</script>
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+<script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

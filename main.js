@@ -3,7 +3,8 @@ const url = require('url');
 const path = require('path');
 
 require('./database');
-let addWindow = require('./category/addWindow');
+let addCategoryWindow = require('./category/addWindow');
+let addSubCategoryWindow = require('./sub_category/addWindow');
 
 const {app,BrowserWindow,Menu,ipcMain,ipcRenderer} = electron;
 
@@ -35,7 +36,8 @@ app.on('ready',function(){
     const mainWMenu = Menu.buildFromTemplate(mainMenuTemplate);
     mainWindow.setMenu(mainWMenu);
     mainWindow.maximize();
-    addWindow.category(mainWindow);
+    addCategoryWindow.category(mainWindow);
+    addSubCategoryWindow.subCategory(mainWindow);
  
 });
 

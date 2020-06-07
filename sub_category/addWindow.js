@@ -1,10 +1,9 @@
 const electron = require('electron');
 const url = require('url');
 const path = require('path');
-
-// require('../database');
 const Category = require("../models/category");
 
+const SubCategory = require("../models/subCategory");
 
 
 const {app,BrowserWindow,Menu,ipcMain,ipcRenderer} = electron;
@@ -15,9 +14,9 @@ let addWindow;
 function createAddWindow(){
     // create new window
     addWindow = new BrowserWindow({
-        width:400,
-        height:250,
-        title:'Add Shopping List Item',
+        width:700,
+        height:600,
+        title:'Add Sub Category',
         webPreferences: {nodeIntegration: true} 
     });
     // load html into window
@@ -36,73 +35,52 @@ function createAddWindow(){
    addWindow.setMenu(addMenu);
 }
 
+// receive send message to call window pop up from subCategory.html 
+ipcMain.on('add-sub-category',function(e,item){
+    createAddWindow();
+});
 
 
-function category(mainWindow){
+// send all category to addWindow.html
+ipcMain.on('get-categories',function(e,arg){
+    Category.find({},function(err,data){
+       if(!err){
+            addWindow.webContents.send('get-categories',JSON.stringify(data));
+       }
+
+   });
+});
 
 
-    // send all items to mainWindow.html
-    ipcMain.on('item-get',function(e,arg){
-       Category.find({},function(err,data){
-          if(!err){
-               mainWindow.webContents.send('item-get',JSON.stringify(data));
-          }
 
-      });
-    });
+function subCategory(mainWindow){
 
-    // get new item from addWindow.html
-    ipcMain.on('item-added',function(e,item){
-       const newCategory = new Category({'name':item});
-       const saveCategory = newCategory.save();
-       if(saveCategory){
-           mainWindow.webContents.send('item-add-success',JSON.stringify(newCategory));
+    // get new sub category from addWindow.html
+    ipcMain.on('new-sub-category-data',function(e,data){
+       const newSubCategory = new SubCategory(data);
+       const saveSubCategory = newSubCategory.save();
+       if(saveSubCategory){
+           console.log(saveSubCategory);
+           mainWindow.webContents.send('sub-category-added',JSON.stringify(newSubCategory));
            addWindow.close();
+
        }
 
 
     });
 
-    // get new item from main.html
-    ipcMain.on('item-add',function(e,item){
-       createAddWindow();
-    
-    
-    });
-
-
-    // get item's id from main.html and delete item
-    ipcMain.on('item-delete',function(e,id){
-
-       Category.findByIdAndDelete(id,function(err,data){
+     // get all sub category to send mainWindow.html
+     ipcMain.on('get-sub-categories',function(e,arg){
+        SubCategory.find({},function(err,data){
            if(!err){
-               mainWindow.webContents.send('item-delete-success',id);
+                mainWindow.webContents.send('get-sub-categories',JSON.stringify(data));
            }
+
        });
-
     });
 
-    // get update item to pass add.html
-    ipcMain.on('item-update',function(e,item){
-       createAddWindow();
-       addWindow.edit = {
-           'data': item
-       };
-    });
-
-    // get updated item from add.html
-    ipcMain.on('item-updated',function(e,item){
     
-      Category.findByIdAndUpdate({_id:item._id}, { name:item.name },function(err,data){
-         if(!err){
-            mainWindow.webContents.send('item-update-success',item);
-             addWindow.close();
-         }
-      });
-  
-    });
 
-   
 }
 // Create  add menu template
 const addMenuTemplate = [
@@ -147,4 +125,4 @@ if(process.env.NODE_ENV !=='production'){
     });
 }
 
-exports.category = category;
+exports.subCategory = subCategory;
