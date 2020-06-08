@@ -3,7 +3,8 @@
 <html lang="en">
 <head>
     <link rel='stylesheet' href='../node_modules/bootstrap/dist/css/bootstrap.css' />
-    <title>About</title>
+    <link rel='stylesheet' href='../assets/css/style.css'/>
+    <title>Sub Category</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -73,6 +74,21 @@
             renderHtml(data);
         });
 
+        // send delete sub category'sid to addWindow.js
+        function deleteItem(id){
+          ipcRenderer.send('sub-cateogry-delete',id);
+        }
+
+        // get delete from add.js and update html
+        ipcRenderer.on('sub-cateogry-deleted',function(e,id){
+
+          newData = data.filter(function(item){
+            return item._id !== id;
+          });
+          data = newData;
+          renderHtml(data);
+        });
+
         // render html
         function renderHtml(data){
               tbody.innerHTML="";
@@ -85,7 +101,7 @@
                       </td>
                       <td>${data[i].price}
                       <td>
-                          <button class="btn btn-sm btn-danger"><small>Delete</small></button>
+                          <button class="btn btn-sm btn-danger" onclick="deleteItem('${data[i]._id}')"><small>Delete</small></button>
                       </td>
                   </tr>
                 

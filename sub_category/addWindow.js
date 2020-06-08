@@ -14,8 +14,8 @@ let addWindow;
 function createAddWindow(){
     // create new window
     addWindow = new BrowserWindow({
-        width:700,
-        height:600,
+        width:900,
+        height:800,
         title:'Add Sub Category',
         webPreferences: {nodeIntegration: true} 
     });
@@ -78,6 +78,17 @@ function subCategory(mainWindow){
 
        });
     });
+
+    // get item's id from main.html and delete item
+    ipcMain.on('sub-cateogry-delete',function(e,id){
+
+        SubCategory.findByIdAndDelete(id,function(err,data){
+            if(!err){
+                mainWindow.webContents.send('sub-cateogry-deleted',id);
+            }
+        });
+ 
+     });
 
     
 
