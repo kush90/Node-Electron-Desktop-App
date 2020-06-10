@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel='stylesheet' href='../node_modules/bootstrap/dist/css/bootstrap.css' />
+    <link rel='stylesheet' href="../assets/css/style.css">
+
+    <title>Preview</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <a class="navbar-brand" href="#">Desktop App</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            
+            <a class="nav-item nav-link" href="#" onclick="invoice()" >Invoice <span class="sr-only">(current)</span></a>
+          </div>
+        </div>
+    </nav>
+    <br>
+    <!-- <div class="container margin-bottom">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <div class="card">
+              <div class="card-header bg-primary text-white">
+                <span>Receipt Form</span>&nbsp;&nbsp;<button class="btn btn-sm btn-warning">Print</button>
+              </div>
+              <div class="card-body">
+                  
+              </div>
+            </div>
+          </div>
+        </div>
+    </div> -->
+    <div class="container margin-bottom">
+      <div class="row">
+          <div class="well mx-auto col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3" id="receipt">
+              <div class="row">
+                  <div class="col-xs-6 col-sm-6 col-md-6">
+                    <br>
+                      <address>
+                          Name : <strong id="pname"></strong>
+                          <br>
+                          Age: <strong id="age"></strong>
+                      </address>
+                  </div>
+                  <div class="col-xs-6 col-sm-6 col-md-6 text-right">
+                    <br>
+                    <address>
+                      Date : <strong id="date"></strong>
+                     
+                  </address>
+                      
+                  </div>
+              </div>
+              <div class="row">
+                  
+                <table class="table">
+                  <thead>
+                     
+                      <th>Category</th>
+                      <th>Test</th>
+                      <th>Price</th>
+                      <th>Result</th>
+                     
+                  </thead>
+                  <tbody id="list">
+
+                  </tbody>
+                 
+                </table>
+                 
+                  <br>
+                  <button type="button" onclick="printVoucher()" class="btn btn-success btn-lg btn-block">
+                      Print    <span class="glyphicon glyphicon-chevron-right"></span>
+                  </button></td>
+              </div>
+          </div>
+      </div>
+    <script>
+
+        const electron = require('electron');     
+        const {ipcRenderer} = electron;
+
+        const path = require('path');
+
+        let url =window.location.search;
+        let id = url.split("=")[1];
+       
+        let tbody = document.querySelector('#list');
+        let data;
+         
+        ipcRenderer.send('get-invoice-by-id',id);
+
+        // get all items from main.js and update html
+        ipcRenderer.on('get-invoice-by-id-success', (e,data) => {
+           
+            data = JSON.parse(data);
+            console.log(data);
+            renderHtml(data);
+            let name = document.getElementById('pname');
+            name.innerHTML=data.name;
+            let age = document.getElementById('age');
+            age.innerHTML=data.age;
+            var d = new Date();
+            let date = document.getElementById('date');
+            date.innerHTML = d.toDateString();
+           
+            
+            
+        });
+
+      
+        // render html
+        function renderHtml(data){
+         
+          tbody.innerHTML="";
+          for(let i=0;i<data.test.length;i++){
+                 tbody.innerHTML += `
+                 <tr>
+                    
+                     <td>${data.test[i].category}</td>
+                     <td>${data.test[i].name}</td>
+                     <td>${data.test[i].price}</td>
+                     <td>${data.result[i].result}</td>
+                     
+                 </tr>
+               
+             `;
+          }  
+          tbody.innerHTML+=`<tr><td colspan="4" style="text-align:right"><button type="button"  id="print" class="btn btn-default">
+                    Total :<span id="total">${totalAmount(data.test)}</span>
+                  </button></td></tr>`;          
+        }
+
+        // print voucher
+        function printVoucher(){
+          
+          window.print();
+          
+        }
+
+      
+        // calculate total amount
+        function totalAmount(data){
+          var total = data.reduce(function(prev, cur) {
+            return prev + cur.price;
+          }, 0);
+          return total;
+        }
+
+        // redirect to category page
+        function invoice(){
+            window.location = path.join(__dirname,'./invoice.html');
+        }
+    </script>
+     <script src="../node_modules/jquery/dist/jquery.js"></script>
+     <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>
