@@ -16,7 +16,7 @@
           <div class="navbar-nav">
             <a class="nav-item nav-link" href="#" onclick="category()">Category</a>
             <a class="nav-item nav-link active" href="#">Sub Category</a>
-            <a class="nav-item nav-link " onclick="about()" >About <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="#" onclick="invoice()" >Invoice</a>
           </div>
         </div>
       </nav>
@@ -123,9 +123,9 @@
         function category(){
             window.location = path.join(__dirname,'../mainWindow.html');
         }
-        // redirect to about page
-        function about(){
-           window.location =  path.join(__dirname,'../about.html'); 
+        // redirect to invoice page
+        function invoice(){
+           window.location =  path.join(__dirname,'../invoice/invoice.html'); 
         }
 
          // send signal to addWindow.js to call window pop up

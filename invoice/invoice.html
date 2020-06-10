@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel='stylesheet' href='../node_modules/bootstrap/dist/css/bootstrap.css' />
+    <link rel='stylesheet' href='../assets/css/style.css'/>
+    <title>Invoice</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <a class="navbar-brand" href="#">Desktop App</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="#" onclick="category()">Category</a>
+            <a class="nav-item nav-link " href="#" onclick="subCategory()">Sub Category</a>
+            <a class="nav-item nav-link active" >Invoice</a>
+          </div>
+        </div>
+      </nav>
+      <br>
+      <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+              <div class="card ">
+                <div class="card-header bg-primary text-white">
+                  <span>Invoice List</span>&nbsp;&nbsp;
+                  <button class="btn btn-sm btn-warning" onclick="createInvoice()">Create</button>
+                </div>
+                <div class="card-body">
+                  <table class="table">
+                    <thead>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Test</th>
+                        <th>Total</th>
+                        <th>Result</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody id="list">
+
+                    </tbody>
+                  </table>
+                </div> 
+                
+              </div>
+                
+            </div>
+        </div>
+      </div>
+    <script>
+           
+        const electron = require('electron');     
+        const {ipcRenderer} = electron;
+        const path = require('path');
+
+        let tbody = document.querySelector('#list');
+
+        let data = [];
+
+        ipcRenderer.send('get-invoices');
+
+        // get all items from main.js and update html
+        ipcRenderer.on("get-invoices", (e, items) => {
+            data = JSON.parse(items);
+            console.log(data);
+            renderHtml(data);
+            
+        });
+
+        // render html
+        function renderHtml(data){
+             tbody.innerHTML="";
+           for(let i=0;i<data.length;i++){
+                 tbody.innerHTML += `
+                 <tr>
+                     <td>${data[i].name}</td>
+                     <td>${data[i].age}</td>
+                     <td>${readTestArray(data[i].test)}</td>
+                     <td>${totalAmount(data[i].test)}</td>
+                     <td>${readResultArray(data[i].result,data[i].test)}</td>
+                     <td>${data[i].status}</td>
+                     <td>
+                        ${checkStatus(data[i].status,data[i]._id)}
+                     </td>
+                 </tr>
+               
+             `;
+             }            
+        };
+
+        // read test array json
+        function readTestArray(data){
+            value ="";
+            for(let i=0;i<data.length;i++){
+              value +=`<span class="h6">${data[i].name}</span>
+              `;
+               if(i != data.length-1){
+                 value += '<span>,</span>';
+               }
+                     
+            }
+            return value;
+        }
+
+        // read result array json
+        function readResultArray(result,test){
+            value ="";
+            if(result){
+            
+              for(let i=0;i<result.length;i++){
+
+                if(test[i].name==result[i].name){
+                  value+=`<span class="h6">${result[i].result}</span>`;
+                  if(i != result.length-1){
+                    value += '<span>,</span>';
+                  }
+                }
+
+              }
+           }
+            
+            return value;
+        }
+
+        // check status condition for button
+        function checkStatus(status,id){
+            if(status == 'pending'){
+              return `<button class="btn btn-sm btn-info" onclick="addResultToInvoice('${id}')"><small>Add Result</small></button>`;
+            }
+            else{
+              return `<button class="btn btn-sm btn-info" onclick="preview('${id}')"><small>Review</small></button>`;
+            }
+        }
+
+        // calculate total amount
+        function totalAmount(data){
+          var total = data.reduce(function(prev, cur) {
+            return prev + cur.price;
+          }, 0);
+          return total;
+        }
+
+        // add Result
+        function addResultToInvoice(id){
+          window.location = './addResult.html?query='+id;
+        }
+
+        // get added sub category from addWindow.js to render in html
+        ipcRenderer.on("invoice-added", (e, item) => {
+            data.push(JSON.parse(item));
+            renderHtml(data);
+        });
+        
+        // redirect to category page
+        function category(){
+            window.location = path.join(__dirname,'../mainWindow.html');
+        }
+
+         // redirect to category page
+         function subCategory(){
+            window.location = path.join(__dirname,'../sub_category/subCategory.html');
+        }
+        
+
+         // send signal to addWindow.js to call window pop up
+        function createInvoice(){
+            ipcRenderer.send('create-invoice');
+        }
+
+         
+       
+
+
+
+
+    </script>
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>

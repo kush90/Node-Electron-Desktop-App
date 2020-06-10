@@ -64,9 +64,7 @@
     });
 
    
-    // dynamic form action
-    let create = document.getElementById('create');
-    create.addEventListener('click',submitForm);
+   
 
     // generate select option value
     function generateSelectOption(options){
@@ -81,6 +79,10 @@
    
 
     // submit form
+
+    let create = document.getElementById('create');
+    create.addEventListener('click',submitForm);
+    
     function submitForm(e){
         e.preventDefault();
         let names = document.getElementsByName('Name[]');

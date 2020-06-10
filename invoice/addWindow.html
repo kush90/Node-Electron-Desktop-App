@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel='stylesheet' href='../node_modules/bootstrap/dist/css/bootstrap.css' />
+    <link rel='stylesheet' href="../assets/css/style.css">
+    <title>Create Invoice</title>
+</head>
+<body>
+<br>
+<div class="container margin-bottom">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <span>Invoice</span>
+           
+        </div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label>Name:</label>
+                    <input type="text" class="form-control" id="pname" placeholder="Enter patient name">
+                </div>
+                <div class="form-group">
+                    <label>Age:</label>
+                    <input type="text" class="form-control" id="age" placeholder="Enter patient age">
+                </div>
+                <fieldset>
+                    <legend>Test:</legend>
+                    <div class="form-group">
+                       
+                        <select class="form-control" id="mySelect" onchange="onTestChange()">
+                            <option>Please select one..</option>
+                            
+                        </select>
+                        <br>
+                        <div id="selected">
+                            <table class="table">
+                                <thead>
+                                    <th>Category</th>
+                                    <th>Test Name</th>
+                                    <th>Price</th>
+                                    <th>Action</th>
+                                </thead>
+                                <tbody id="list">
+            
+                                </tbody>
+                              </table>
+                        </div>
+                    </div>
+                    
+                </fieldset>
+                <br>
+                <button type="button" class="btn btn-primary" id="create">Submit</button>
+                
+           </form>
+        </div>
+      </div>
+</div>
+    
+
+<script>
+   
+        const electron = require('electron');
+
+        const {ipcRenderer} = electron;
+
+        let selectedValue=[];
+        
+        
+        let tbody = document.querySelector('#list');
+        
+
+        ipcRenderer.send('get-subCategories');
+
+        ipcRenderer.on("get-subCategories", (e, items) => {
+               data = JSON.parse(items);
+              
+               generateSelectOption(data);
+               
+               
+        });
+
+         // generate select option value
+        function generateSelectOption(options){
+            let select = document.getElementById('mySelect');
+            for (var i = 0; i<=options.length; i++){
+                var opt = document.createElement('option');
+                opt.value = JSON.stringify(options[i]);
+                opt.innerHTML = options[i].name;
+                select.appendChild(opt);
+             }
+        }
+
+        // get selected value form select and push to array
+        let dropdown = document.getElementById('mySelect');
+        dropdown.addEventListener('change',onTestChange);
+
+        function onTestChange(){
+            
+            let value = JSON.parse($('#mySelect').val());
+           
+            let check = selectedValue.filter((data)=>{
+                return data._id == value._id;
+            });
+            if(check.length==0){
+                selectedValue.push(value);
+                $('#mySelect').val('Please select one..');
+                renderHtml(selectedValue);
+            }
+           
+        }
+
+        // delete value from selectedValue  array
+        function deleteSelectedTest(id){
+            deleteItem = selectedValue[id];
+            newData = selectedValue.filter(function(item){
+               return item._id !== deleteItem._id;
+             });
+            selectedValue = newData;
+            renderHtml(selectedValue);
+
+        }
+
+        // render html
+        function renderHtml(data){
+            
+            tbody.innerHTML="";
+            for(let i=0;i<data.length;i++){
+                  tbody.innerHTML += `
+                  <tr >
+                      <td>${data[i].category}</td>
+                      <td>${data[i].name}</td>
+                      <td>${data[i].price}
+                      <td><button class="btn btn-sm btn-danger" onclick="deleteSelectedTest('${i}')"><small>Delete</small></button></td>
+                      
+                  </tr>
+                
+              `;
+            }            
+        };
+        // submit form
+
+        let create = document.getElementById('create');
+        create.addEventListener('click',submitForm);
+
+        function submitForm(e){
+            let final={};
+            e.preventDefault();
+            let name = document.getElementById('pname').value;
+            let age = document.getElementById('age').value;
+            final['name']=name;
+            final['age']=age;
+            final['test']=selectedValue;
+            ipcRenderer.send('new-invoice-data',final);
+            console.log(final);
+           
+        }
+
+
+    
+    
+
+    
+</script>
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+<script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

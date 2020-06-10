@@ -5,6 +5,7 @@ const path = require('path');
 require('./database');
 let addCategoryWindow = require('./category/addWindow');
 let addSubCategoryWindow = require('./sub_category/addWindow');
+let addInvoiceWindow = require('./invoice/addWindow');
 
 const {app,BrowserWindow,Menu,ipcMain,ipcRenderer} = electron;
 
@@ -38,6 +39,7 @@ app.on('ready',function(){
     mainWindow.maximize();
     addCategoryWindow.category(mainWindow);
     addSubCategoryWindow.subCategory(mainWindow);
+    addInvoiceWindow.invoice(mainWindow);
  
 });
 

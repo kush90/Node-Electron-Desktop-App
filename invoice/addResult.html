@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel='stylesheet' href='../node_modules/bootstrap/dist/css/bootstrap.css' />
+    <link rel='stylesheet' href="../assets/css/style.css">
+
+    <title>Add Result</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <a class="navbar-brand" href="#">Desktop App</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            
+            <a class="nav-item nav-link" href="#" onclick="invoice()" >Invoice <span class="sr-only">(current)</span></a>
+          </div>
+        </div>
+    </nav>
+    <br>
+    <div class="container  margin-bottom">
+        <div class="card">
+          <div class="card-header  bg-primary text-white" id="header">
+            <p>Add test result for : <span id="pname"></span></p>
+          </div>
+          <div class="card-body" >
+            <form id="form">
+              <div id="body">
+
+              </div>
+              <br>
+              <button type="submit" class="btn btn-primary" id="create">Submit</button>
+              
+          </form>
+          </div>
+        </div>
+    </div>
+
+    <script>
+
+        const electron = require('electron');     
+        const {ipcRenderer} = electron;
+
+        const path = require('path');
+
+        let url =window.location.search;
+        let id = url.split("=")[1];
+       
+
+        let data;
+         
+        ipcRenderer.send('get-invoice-by-id',id);
+
+        // get all items from main.js and update html
+        ipcRenderer.on('get-invoice-by-id-success', (e,data) => {
+           
+            data = JSON.parse(data);
+            console.log(data);
+            renderHTML(data);
+            
+        });
+
+        // render html
+        function renderHTML(data){
+          let span = document.getElementById('pname');
+          span.innerHTML=data.name;
+          let body = document.getElementById('body');
+
+          for(let i=0;i<data.test.length;i++){
+                body.innerHTML+=`
+                <div id="accordion">
+                  <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapse${i}">
+                          ${data.test[i].category} / ${data.test[i].name}
+                        </a>
+                    </div>
+                    <div id="collapse${i}" class="collapse show" data-parent="#accordion">
+                      <div class="card-body">
+                        <div class="col-lg-3">
+                         
+                          <div class="form-group">
+                              
+                              <input type="text" title="${data.test[i].name}" class="form-control" id="value" placeholder="Enter result">
+                          </div>
+                          
+                          
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+                `;
+          }
+        }
+
+        // submit form
+
+        let create = document.getElementById('create');
+        create.addEventListener('click',submitForm);
+        function submitForm(e){
+          e.preventDefault();
+          let form_value = $('input[type=text]');
+          let info=[];
+         
+            for(let i=0;i<form_value.length;i++){
+              let obj={};
+              obj['name']=form_value[i].title;
+              obj['result']= form_value[i].value;
+              info.push(obj);
+            }
+            
+            ipcRenderer.send('add-result-to-invoice',info,id);
+            window.location = path.join(__dirname,'./invoice.html');
+
+        }
+
+        // redirect to category page
+        function invoice(){
+            window.location = path.join(__dirname,'./invoice.html');
+        }
+    </script>
+     <script src="../node_modules/jquery/dist/jquery.js"></script>
+     <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>
