@@ -7,47 +7,102 @@
 </head>
 <body>
 <br>
-<div class="container margin-bottom">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <span>Sub Category</span>
-           
-        </div>
-        <div class="card-body">
-            <form>
-                <div class="form-group">
-                    <label>Category:</label>
-                    <select class="form-control" id="mySelect">
-                        <option>Please select one..</option>
-                        
-                      </select>
+<div class="container-fluid margin-bottom">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <span>Sub Category</span>
+                   
                 </div>
-                <div class="form-group">
-                    <label>Sub Category</label>
-                    <input type="text" class="form-control" id="cname" placeholder="Enter sub category name">
-                </div>
-                <div class="form-group">
-                    <label>Price</label>
-                    <input type="text" class="form-control" id="price" placeholder="Enter price">
-                </div>
-                <hr>
-                <fieldset>
-                    <legend>Info: &nbsp;&nbsp;<input type="button" class="btn btn-sm btn-warning" value="ADD +" onclick="addInput('dynamicInput');"></legend>
-                    <div class="form-group" id="dynamicInput">
-                        <label>Field Name:</label>
-                        <input type="text" class="form-control" name="Name[]" placeholder="Enter field name"><br>
-                        <label>Field Value:</label>
-                        <input type="text" class="form-control" name="Value[]" placeholder="Enter field value">
-                        <hr>
+                <div class="card-body">
+                    <form>
+                    <div class="row">
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Category:</label>
+                                <select class="form-control" id="mySelect">
+                                    <option>Please select one..</option>
+                                    
+                                  </select>
+                            </div>
+                        </div>
                     </div>
-                </fieldset>
-                <br>
-                <button type="button" class="btn btn-primary" id="create">Submit</button>
-                
-           </form>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Sub Category</label>
+                                <input type="text" class="form-control" id="cname" placeholder="Enter sub category name">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Price</label>
+                                <input type="text" class="form-control" id="price" placeholder="Enter price">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <fieldset id="testForm">
+                                <legend>Add Test &nbsp; <button type="button" class="btn btn-sm btn-success" onclick="addTestForm();" id="add">+</button></legend>
+                                    <div id="test0">
+                                    <div class="card" >
+                                        <div class="card-body">
+                                            <div class="form-row">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label>Test:</label>
+                                                        <input type="text" class="form-control" placeholder="Enter test name" name="test_name[]" id="test_name">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label >Unit 1:</label>
+                                                        <input type="text" class="form-control" placeholder="Enter unit1 value" name="unit1[]" id="unit1">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label >Unit 2:</label>
+                                                        <input type="text" class="form-control" placeholder="Enter unit2 value" name="unit2[]" id="unit2">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label for="email">Info:</label>
+                                                        <input type="text" class="form-control" placeholder="Enter info" name="info[]" id="info">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <br>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary" id="create">Submit</button>
+                    
+                    </div>
+                  
+                    </form>
+                </div>
+                       
+                        
+                  
+            </div>
         </div>
-      </div>
+    </div>
 </div>
+ 
     
 
 <script>
@@ -85,54 +140,88 @@
     
     function submitForm(e){
         e.preventDefault();
-        let names = document.getElementsByName('Name[]');
-        let values = document.getElementsByName('Value[]');
 
-        let info = {};
-        let final = {};
-       
-        for(let i=0;i<names.length;i++){
-            let obj = {};
-            obj[names[i].value] = values[i].value;
-            
-            Object.assign(info,obj);
-        }
-
+        let final={};
         var select = document.getElementById("mySelect");
         var value = select.options[select.selectedIndex].value; 
         if(value != "Please select one.."){
            final['category']=value;
         }
 
-        var v = document.getElementById("cname").value;
+        final['name']= document.getElementById("cname").value;
         final['price'] = document.getElementById("price").value;
-        
 
-        final['name'] = v;
-        final['info'] = info;
-        console.log(final);
+        let names = document.getElementsByName('test_name[]');
+        let unit1 = document.getElementsByName('unit1[]');
+        let unit2 = document.getElementsByName('unit2[]');
+        let info = document.getElementsByName('info[]');
+       
+        let test=[];
+        
+        for(let i=0;i<names.length;i++){
+            let obj = {};
+            
+            obj[names[i].id] = names[i].value;
+            obj[unit1[i].id] = unit1[i].value;
+            obj[unit2[i].id] = unit2[i].value;
+            obj[info[i].id] = info[i].value;
+            
+           test.push(obj);
+        }
+        final['test'] =test;
+       
         ipcRenderer.send('new-sub-category-data',final);
         
         
     }
 
     // generate dynamic form div
-    var counter = 1;
-    function addInput(divName){
+    var counter = 0;
+    function addTestForm(){
+     
         counter++;
-        var newdiv = document.createElement('div');
-        newdiv.setAttribute('id','current' + counter);
-        newdiv.innerHTML ="<label>Field Name:</label><input type='text' class='form-control' name='Name[]' placeholder='Enter name'><br>";
-        newdiv.innerHTML+="<label>Field Value:</label><input type='text' class='form-control' name='Value[]' placeholder='Enter value'><br>";
-        newdiv.innerHTML+="<button class='btn btn-danger' type='button'onclick='remove(this)'>Remove</button><hr>"
+        let newdiv= document.createElement('div');
+        newdiv.setAttribute('id','test'+counter);
+        newdiv.innerHTML=`     <div class='card'>
+                                        <div class="card-body">
+                                            <div class="form-row">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label>Test:</label>
+                                                        <input type="text" class="form-control" placeholder="Enter test name" name="test_name[]" id="test_name">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label >Unit 1:</label>
+                                                        <input type="text" class="form-control" placeholder="Enter unit1 value" name="unit1[]" id="unit1">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label >Unit 2:</label>
+                                                        <input type="text" class="form-control" placeholder="Enter unit2 value" name="unit2[]" id="unit2">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <label for="email">Info:</label>
+                                                        <input type="text" class="form-control" placeholder="Enter info" name="info[]" id="info">
+                                                    </div>
+                                                </div>
+                                                <button class='btn btn-danger' type='button'onclick='remove(this)'>Remove</button>
+                                            </div>
+                                        </div>
+                                    </div><br>`;
+        
+        document.getElementById('testForm').appendChild(newdiv);
        
-        document.getElementById(divName).appendChild(newdiv);
-            
     }
+    
 
     // remove dynamic input form div
     function remove(element){
-        element.parentElement.remove();
+        element.parentElement.parentElement.parentElement.remove();
     }
    
     

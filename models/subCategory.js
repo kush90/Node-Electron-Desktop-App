@@ -9,8 +9,8 @@ const SubCategorySchema = new Schema({
     type: String,
     required: true
   },
-  info:{
-      type:Object,
+  test:{
+      type:Array,
   },
   price:{
     type:Number,

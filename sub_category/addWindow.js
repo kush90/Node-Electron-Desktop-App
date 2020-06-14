@@ -14,7 +14,7 @@ let addWindow;
 function createAddWindow(){
     // create new window
     addWindow = new BrowserWindow({
-        width:900,
+        width:1200,
         height:800,
         title:'Add Sub Category',
         webPreferences: {nodeIntegration: true} 

@@ -34,7 +34,7 @@
                     <thead>
                         <th>Category</th>
                         <th>Name</th>
-                        <th>Info</th>
+                        <th>Test</th>
                         <th>Price</th>
                         <th>Action</th>
                     </thead>
@@ -70,6 +70,7 @@
 
          // get added sub category from addWindow.js to render in html
          ipcRenderer.on("sub-category-added", (e, item) => {
+          
             data.push(JSON.parse(item));
             renderHtml(data);
         });
@@ -97,7 +98,7 @@
                   <tr>
                       <td>${data[i].category}</td>
                       <td>${data[i].name}</td>
-                      <td>${ReadJson(data[i].info)}
+                      <td>${ReadArray(data[i].test)}
                       </td>
                       <td>${data[i].price}
                       <td>
@@ -110,13 +111,15 @@
         };
 
         // read object json
-        function ReadJson(obj){
+        function ReadArray(test){
           let value = "";
-          for (var key in Object.keys(obj)) {
-              var t = Object.keys(obj)[key];
-              value += t + " : " + obj[t]+"<br>";
-          }
-          return value;
+           test.map((t,i)=>{
+              value += t.test_name;
+              if(i != test.length-1){
+                    value += '<span>,</span>';
+              }
+           });
+           return value;
         }
 
         // redirect to category page
