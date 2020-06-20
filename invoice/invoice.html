@@ -30,6 +30,7 @@
                   <button class="btn btn-sm btn-warning" onclick="createInvoice()">Create</button>
                 </div>
                 <div class="card-body">
+                  <input type="text" id="search" class="form-control" onkeyup="search()" placeholder="Search for by names...">
                   <table class="table">
                     <thead>
                         <th>Name</th>
@@ -105,7 +106,6 @@
         }
 
        
-
         // check status condition for button
         function checkStatus(status,id){
             if(status == 'pending'){
@@ -123,6 +123,22 @@
           }, 0);
           return total;
         }
+
+        // search invoice by name
+        function search(){
+          let name = $('#search').val();
+          if(name){
+            newData = data.filter(function(item){
+               return item.name == name;
+            });
+            renderHtml(newData);
+          }
+          else{
+            renderHtml(data);
+          }
+          
+        }
+
         // preview of invoice
         function preview(id){
           window.location = './preview.html?query='+id;
@@ -157,11 +173,6 @@
         }
 
          
-       
-
-
-
-
     </script>
     <script src="../node_modules/jquery/dist/jquery.js"></script>
     <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
