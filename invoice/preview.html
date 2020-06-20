@@ -63,7 +63,7 @@
                       <th>Category</th>
                       <th>Test</th>
                       <th>Price</th>
-                      <th>Result</th>
+                     
                      
                   </thead>
                   <tbody id="list">
@@ -71,11 +71,14 @@
                   </tbody>
                  
                 </table>
-                 
-                  <br>
-                  <button type="button" onclick="printVoucher()" class="btn btn-success btn-lg btn-block">
-                      Print    <span class="glyphicon glyphicon-chevron-right"></span>
-                  </button></td>
+                <h5 style="margin: 20px auto;">Test Result Info</h5>
+                <div id="test" style="width:100%">
+
+                </div>
+                <br>
+                <button type="button" onclick="printVoucher()" class="btn btn-success btn-lg btn-block">
+                    Print    <span class="glyphicon glyphicon-chevron-right"></span>
+                </button></td>
               </div>
           </div>
       </div>
@@ -90,6 +93,7 @@
         let id = url.split("=")[1];
        
         let tbody = document.querySelector('#list');
+        let accordion = document.querySelector('#test');
         let data;
          
         ipcRenderer.send('get-invoice-by-id',id);
@@ -107,9 +111,8 @@
             var d = new Date();
             let date = document.getElementById('date');
             date.innerHTML = d.toDateString();
+            readResultArray(data.test,data.result);
            
-            
-            
         });
 
       
@@ -124,8 +127,7 @@
                      <td>${data.test[i].category}</td>
                      <td>${data.test[i].name}</td>
                      <td>${data.test[i].price}</td>
-                     <td>${data.result[i].result}</td>
-                     
+                    
                  </tr>
                
              `;
@@ -142,6 +144,48 @@
           
         }
 
+        // read result array json
+        function readResultArray(data,result){
+          accordion.innerHTML="";
+         
+         
+            for(var k=0;k<result.length;k++){
+
+              for(var i = 0; i < data.length; i++){
+               
+                for(var j = 0; j < data[i].test.length; j++){
+
+                  if(data[i].test[j].test_name == result[k].test_name){
+                    accordion.innerHTML+=`
+                            <div id="accordion">
+                              <div class="card">
+                                <div class="card-header">
+                                    <a class="card-link" data-toggle="collapse" href="#collapse${i}">
+                                      ${data[i].name} / ${data[i].test[j].test_name}
+                                    </a>
+                                </div>
+                                <div id="collapse${i}" class="collapse show" data-parent="#accordion">
+                                  <div class="card-body">
+                                    <div class="row">
+
+                                      <p style="margin-left:17px;">${data[i].test[j].unit1} : ${result[k].result}</p>
+
+
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                            </div>`;
+
+                  }
+                 
+                }
+                
+            }
+          }
+             
+        }
       
         // calculate total amount
         function totalAmount(data){

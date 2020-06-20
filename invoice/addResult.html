@@ -49,14 +49,14 @@
         let id = url.split("=")[1];
        
 
-        let data;
+        var data={};
          
         ipcRenderer.send('get-invoice-by-id',id);
 
         // get all items from main.js and update html
-        ipcRenderer.on('get-invoice-by-id-success', (e,data) => {
+        ipcRenderer.on('get-invoice-by-id-success', (e,item) => {
            
-            data = JSON.parse(data);
+            data = JSON.parse(item);
             console.log(data);
             renderHTML(data);
             
@@ -79,12 +79,9 @@
                     </div>
                     <div id="collapse${i}" class="collapse show" data-parent="#accordion">
                       <div class="card-body">
-                        <div class="col-lg-3">
-                         
-                          <div class="form-group">
-                              
-                              <input type="text" title="${data.test[i].name}" class="form-control" id="value" placeholder="Enter result">
-                          </div>
+                        <div class="row">
+                          ${listTest(data.test[i].test)}
+                        
                           
                           
                         </div>
@@ -97,6 +94,43 @@
           }
         }
 
+        // list down test
+
+        function listTest(test){
+          let test_result="";
+          for(let i=0;i<test.length;i++){
+            if(test[i].unit1){
+              test_result +=`
+            
+                      
+            <div class="col-lg-3">
+                   <div class="form-group">
+                        <label><b>${test[i].test_name}:</b>&nbsp;${test[i].unit1}</label>
+                        <input type="text" title=${test[i].test_name}  class="form-control" placeholder="Enter test name">
+                  </div>
+            </div>
+
+            `;
+            }else if(test[i].unit2){
+              test_result +=`
+            
+                      
+            <div class="col-lg-3">
+                   <div class="form-group">
+                        <label><b>${test[i].test_name}:</b>&nbsp;${test[i].unit2}</label>
+                        <input type="text" title=${test[i].test_name} class="form-control" placeholder="Enter test name" >
+                  </div>
+            </div>
+
+            `;
+            }
+           
+          
+          }
+          return test_result;
+        
+        }
+
         // submit form
 
         let create = document.getElementById('create');
@@ -106,15 +140,16 @@
           let form_value = $('input[type=text]');
           let info=[];
          
-            for(let i=0;i<form_value.length;i++){
-              let obj={};
-              obj['name']=form_value[i].title;
-              obj['result']= form_value[i].value;
-              info.push(obj);
-            }
-            
-            ipcRenderer.send('add-result-to-invoice',info,id);
-            window.location = path.join(__dirname,'./invoice.html');
+          for(let i=0;i<form_value.length;i++){
+            let obj={};
+            obj['test_name']=form_value[i].title;
+            obj['result']= form_value[i].value;
+           
+            info.push(obj);
+          }
+         
+          ipcRenderer.send('add-result-to-invoice',info,id);
+          window.location = path.join(__dirname,'./invoice.html');
 
         }
 

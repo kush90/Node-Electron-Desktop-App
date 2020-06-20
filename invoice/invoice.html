@@ -36,7 +36,6 @@
                         <th>Age</th>
                         <th>Test</th>
                         <th>Total</th>
-                        <th>Result</th>
                         <th>Status</th>
                         <th>Action</th>
                     </thead>
@@ -81,7 +80,6 @@
                      <td>${data[i].age}</td>
                      <td>${readTestArray(data[i].test)}</td>
                      <td>${totalAmount(data[i].test)}</td>
-                     <td>${readResultArray(data[i].result,data[i].test)}</td>
                      <td>${data[i].status}</td>
                      <td>
                         ${checkStatus(data[i].status,data[i]._id)}
@@ -106,25 +104,7 @@
             return value;
         }
 
-        // read result array json
-        function readResultArray(result,test){
-            value ="";
-            if(result){
-            
-              for(let i=0;i<result.length;i++){
-
-                if(test[i].name==result[i].name){
-                  value+=`<span class="h6">${result[i].result}</span>`;
-                  if(i != result.length-1){
-                    value += '<span>,</span>';
-                  }
-                }
-
-              }
-           }
-            
-            return value;
-        }
+       
 
         // check status condition for button
         function checkStatus(status,id){
@@ -132,7 +112,7 @@
               return `<button class="btn btn-sm btn-info" onclick="addResultToInvoice('${id}')"><small>Add Result</small></button>`;
             }
             else{
-              return `<button class="btn btn-sm btn-info" onclick="preview('${id}')"><small>Review</small></button>`;
+              return `<button class="btn btn-sm btn-info" onclick="preview('${id}')"><small>See Detail</small></button>`;
             }
         }
 
