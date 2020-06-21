@@ -9,6 +9,10 @@ const InvoiceSchema = new Schema({
     type: String,
     required: true
   },
+  doc_name: {
+    type: String,
+    required: true
+  },
   test:{
       type:Array,
   },

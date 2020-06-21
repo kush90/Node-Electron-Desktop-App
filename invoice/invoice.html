@@ -127,9 +127,9 @@
         // search invoice by name
         function search(){
           let name = $('#search').val();
-          if(name){
+          if(name.toLowerCase()){
             newData = data.filter(function(item){
-               return item.name == name;
+               return item.name.toLowerCase() == name;
             });
             renderHtml(newData);
           }

@@ -23,6 +23,10 @@
                     <label>Age:</label>
                     <input type="text" class="form-control" id="age" placeholder="Enter patient age">
                 </div>
+                <div class="form-group">
+                    <label>Referred Dr:</label>
+                    <input type="text" class="form-control" id="dr" placeholder="Enter doctor name">
+                </div>
                 <fieldset>
                     <legend>Test:</legend>
                     <div class="form-group">
@@ -147,8 +151,10 @@
             e.preventDefault();
             let name = document.getElementById('pname').value;
             let age = document.getElementById('age').value;
+            let doc_name = document.getElementById('dr').value;
             final['name']=name;
             final['age']=age;
+            final['doc_name']=doc_name;
             final['test']=selectedValue;
             ipcRenderer.send('new-invoice-data',final);
             console.log(final);

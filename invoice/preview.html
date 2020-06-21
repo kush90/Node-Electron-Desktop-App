@@ -16,6 +16,7 @@
           <div class="navbar-nav">
             
             <a class="nav-item nav-link" href="#" onclick="invoice()" >Invoice <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" style="color: white;font-weight: 700;" href="#" onclick="printVoucher()" >Print <span class="sr-only">(current)</span></a>
           </div>
         </div>
     </nav>
@@ -23,7 +24,14 @@
   
     <div class="container margin-bottom">
      
+        
+      
       <div class="row">
+        <!-- <div class="col-lg-2" style="margin:10px auto;">
+          <button type="button" onclick="printVoucher()" class="btn btn-success btn-sm btn-block">
+            Print   
+        </button>
+        </div> -->
           <div class="well mx-auto col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3" id="receipt">
               <div class="row">
                   <div class="col-xs-6 col-sm-6 col-md-6">
@@ -38,7 +46,8 @@
                     <br>
                     <address>
                       Date : <strong id="date"></strong>
-                     
+                      <br>
+                      Referred Dr :<strong id="dr"></strong>
                   </address>
                       
                   </div>
@@ -64,9 +73,7 @@
 
                 </div>
                 <br>
-                <button type="button" onclick="printVoucher()" class="btn btn-success btn-sm btn-block">
-                  Print   
-              </button>
+                
                 </td>
               </div>
           </div>
@@ -97,6 +104,8 @@
             name.innerHTML=data.name;
             let age = document.getElementById('age');
             age.innerHTML=data.age;
+            let dr = document.getElementById('dr');
+            dr.innerHTML=data.doc_name;
             var d = new Date();
             let date = document.getElementById('date');
             date.innerHTML = d.toDateString();
@@ -130,6 +139,7 @@
         function printVoucher(){
           
           window.print();
+         
           
         }
 
