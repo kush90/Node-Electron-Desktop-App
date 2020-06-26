@@ -99,13 +99,13 @@
         function listTest(test){
           let test_result="";
           for(let i=0;i<test.length;i++){
-            if(test[i].unit1){
+            if(test[i].unit1 || test[i].unit1==""){
               test_result +=`
             
                       
             <div class="col-lg-3">
                    <div class="form-group">
-                        <label><b>${test[i].test_name}:</b>&nbsp;${test[i].unit1}</label>
+                        <label><b>${test[i].test_name}:</b>&nbsp;${test[i].unit1 ? test[i].unit1 :"N/A"}</label>
                         <input type="text" title=${test[i].test_name}  class="form-control" placeholder="Enter test name">
                   </div>
             </div>
