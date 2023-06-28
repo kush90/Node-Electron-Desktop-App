@@ -15,11 +15,11 @@
     "bootstrap": "^4.5.0",
     "electron": "^9.0.0",
     "jquery": "^3.5.1",
-    "mongoose": "^5.9.16",
+    "mongoose": "^5.13.19",
     "nedb": "^1.8.0",
     "popper.js": "^1.16.1"
   },
   "devDependencies": {
-    "electron-packager": "^14.2.1"
+    "electron-packager": "^17.1.1"
   }
 }
